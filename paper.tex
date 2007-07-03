@@ -1,0 +1,123 @@
+\documentclass[conference]{IEEEtran}
+
+\newcommand{\thetitle}{Characterizing Flow Behavior in WLANs {\huge{Change-Point Detection and Distribution Clustering}}}
+
+\usepackage[pdftex]{graphicx}
+\usepackage[labelfont=bf,small]{caption}
+\usepackage[font=small,labelfont=bf,position=top,nearskip=0em]{subfig}
+\usepackage{cite,amsmath,amssymb,rotating,multirow,bigstrut,url,wrapfig}
+\usepackage[hyperfigures,bookmarks,bookmarksopen,bookmarksnumbered,frenchlinks=true,pdftitle={Characterizing Flow Behavior in WLANs: Change-Point Detection and Distribution Clustering}]{hyperref}
+
+\hyphenation{op-tical net-works semi-conduc-tor IEEEtran}
+\bibliographystyle{IEEEtran}
+
+\newcommand{\email}[1]{$\left<{\textit{#1}}\right>$}
+\newcommand{\caps}[1]{{\small{#1}}}
+
+\title{
+\vspace{-0.25em}
+\thetitle
+}
+\author{
+{\large{Stefan~Karpinski, Elizabeth~M.~Belding, Kevin~C.~Almeroth}} \vspace{0.25em}\\
+Department of Computer Science \\
+University of California, Santa Barbara \vspace{0.35em}\\
+\textit{\{sgk,ebelding,almeroth\}@cs.ucsb.edu}
+%\vspace{-0.5em}
+}
+
+\newcommand{\X}{\mathsf{X}}
+\newcommand{\M}{\mathsf{M}}
+\newcommand{\E}[1]{\left<#1\right>}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\ceil}[1]{\left\lceil#1\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor#1\right\rfloor}
+
+\newcommand{\figurename}{Figure}
+\newcommand{\tablename}{Table}
+
+\renewcommand{\topfraction}{0.95}% max fraction of floats at top
+\renewcommand{\bottomfraction}{0.95}% max fraction of floats at bottom
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{4}
+\setcounter{totalnumber}{4}% 2 may work better
+\setcounter{dbltopnumber}{4}% for 2-column pages
+\renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07}% allow minimal text w. figs
+\widowpenalty=1000
+\clubpenalty=1000
+
+\graphicspath{{plots/}}
+
+\begin{document}
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+Traffic patterns in wireless local-area networks (\caps{WLAN}s) have recently become recognized as a subject of significant interest and importance in wireless research~\cite{Papadopouli05,Hernandez06:wlan-traffic,Ploumidis07,Karaliopoulos07,Karpinski07:realism,Karpinski07:cbr-failure}. Most of this research has taken a top-down approach, aiming to reproduce high-level statistical characteristics of observed workload patterns. In particular, Her\'andez-Campos~\textit{et~al.}~\cite{Hernandez06:wlan-traffic} showed convincingly that the following statistical models apply to \caps{WLAN} traffic: user arrivals (sessions) in general follow a time-varying Poisson model; the number of flows per session follows a BiPareto distribution; the sizes of flows also follow a BiPareto distribution; the intervals between the initiations of flows within each session follow a Lognormal distribution. These models provide an excellent high-level overview of the behavior of users and applications in \caps{WLAN}s.
+
+The methodology for generating synthetic \caps{WLAN} workload remains incomplete, however. While the high-level scaffolding for producing traffic exists, the low-level behavior of flows is neither understood nor reproducible. The common practice in workload generation is to use a uniform constant bit-rate (\caps{CBR}) model for the packet-level behavior of flows: all flows have the same number of packets, all packets have identical size, and the intervals between packets in each flow are fixed. Karpinski~\textit{et~al.}~\cite{Karpinski07:realism,Karpinski07:cbr-failure} showed, however, that all variants of \caps{CBR} packet behavior models drastically distort important performance metrics, and thus fail the litmus test for realism. Distorted performance resulted even when \caps{CBR} was applied with high-level behavior taken directly from traces \textit{and} using accurate packet count, packet size, and inter-packet interval for each flow. More sophisticated models of packet-level flow behavior are needed before accurate simulation results can be achieved.
+%Moreover, in this work, it was assumed that not only how many packets each flow consisted of, but also the total duration of each flow, and thus its average data rate, were both accurately modeled. While this research did not specifically examine the mixed-model case where only one of these parameters was known, this additional ignorance can only worsen the accuracy the model.
+
+Using variable bit-rate (\caps{VBR}) flows is a common elaboration upon the \caps{CBR} flow model. In \caps{VBR} models, the packets sizes and the inter-packet intervals of each flow are separately randomly sampled from independent, identically distributed (i.i.d.) pre-specified distributions.
+% independently randomly sampled from fixed, pre-specified distributions. %Both the packet sizes and inter-packet intervals are thus modeled as separate, independent and identically distributed (i.i.d.) time series.
+One of the most significant results of~\cite{Karpinski07:realism} is that if high-level workload is realistic, then an i.i.d. \caps{VBR} model for flow behavior accurately reproduces network performance---\textit{so long as realistic packet size and inter-packet interval distributions are used for each flow}. This requirement, however, is non-trivial to satisfy. The size and interval distributions used in~\cite{Karpinski07:realism} were not simply parametric distributions typically used with \caps{VBR} models. Rather, they were empirical distributions of 
+
+Each flow has a unique signature of packet sizes and inter-packet intervals. To produce a realistic \textit{collection} of such signatures, requires an understanding of what realistic signatures ``look like,'' and how frequently they occur relative to each other. One can conceptualize this as a ``distribution of distributions.'' Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
+
+Unfortunately, packet-size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces. % TODO: verify this
+Practically, limits on feasible values and quantization make these dimensions finite, but they remain too large for direct characterization of the regions in which realistic flow behaviors are found. In this work we use several non-parametric statistical analysis techniques---including a novel distribution clustering method---to analyze, understand, and ultimately characterize the space of packets size and inter-packet interval distributions found in examples of real \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.} perfectly: their session and flow models provide the high-level behavior, while our packet models provide the low-level behavior. Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
+
+%The work of Hern\'andez-Campos~\textit{et~al.} has provided a statistically validated high-level framework for \caps{WLAN} traffic patterns. Karpinski~\textit{et~al.} demonstrated that given such a high-level framework, together with realistic per-flow packet size and inter-packet interval distributions, one can produce a complete and sufficiently realistic model for generating \caps{WLAN} traffic. In this research we address the outstanding problem: understanding and modeling the packet size and inter-packet interval distributions of flows in a \caps{WLAN}. 
+
+%There are still, however, some rather large gaps in this picture. Because the various distributions are sampled independently, it follows that both the collections flows of each for user/session, and their individual packet-level behaviors, on average, look alike. Intuitively, on the other hand, it seems clear that different users must have different basic flow- and packet-level behaviors. It remains an open question whether this intuitively unrealistic uniformity of flow and packet behavior affects important performance characteristics. The methodology we introduced in~\cite{Karpinski07:realism} and made statistically rigorous in~\cite{Karpinski07:cbr-failure} promises the ability to shed light on this question.
+
+%One of the open questions is whether these distributions can all be sampled independently. It may be that there is correlation between the per-user flow count value and the sizes or inter-arrival times of the individual flows.
+
+%Another open problem is how to generate individual packets for each flow. Our previous work~\cite{Karpinski07:cbr-failure} showed that the constant bit-rate \caps{CBR} packet behavior model, even when employed with higher level behavior taken directly traces, still fails to accurately reproduce all of the performance metrics considered, except for average end-to-end network latency. Even in the ``good'' case of average end-to-end latency, factor of error induced by the \caps{CBR} model exceeded a factor of two half or the time! Moreover, this model assumed that it was known, not only how many packets each flow consisted of, but also the total duration of each flow, and thus its average data rate. While we did not examine the mixed-model case where only one of these parameters was known, this additional ignorance can only worsen the accuracy the model.
+
+
+
+%Our work complements this by providing an objective, rigorous methodology for measuring how accurately synthetic models reproduce the performance characteristics of real-world traffic~\cite{Karpinski07:realism,Karpinski07:cbr-failure}. This paper aims to bridge the gap by 
+
+%Previous work has shown that with knowledge of the following properties for each flow, realistic performance of wireless traffic can be reproduced accurately:
+%\begin{enumerate}
+%\item packet count (equivalently, duration),
+%\item distribution of packet sizes,
+%\item distribution of inter-packet intervals.
+%\end{enumerate}
+%In short, for the purpose of generating experimental workload that accurately predicts performance under real-world traffic conditions, it is sufficient to know the marginal distributions of packet properties, without any time-series analysis. Each simulated flow can be produced by generating a sequence of packets in the following manner: randomly generate a packet size by sampling the size distribution; wait a randomly generated duration sampled from the inter-packet interval distribution; repeat until the appropriate number of packets has been generated.
+
+\section{Methodology}\label{sec:methodology}
+
+
+
+%Non-flowlet procedure:
+%\begin{enumerate}
+%\item trace data
+%\item per-flow distributions
+%\item multi-flow distribution clusters
+%\item multi-flow distribution cluster approximations (PCA)
+%\end{enumerate}
+%Flowlet procedure:
+%\begin{enumerate}
+%\item trace data
+%\item flowlets (via change-point detection)
+%\item per-flowlet distributions
+%\item multi-flowlet distribution clusters
+%\item multi-flowlet distribution cluster approximations (PCA)
+%\end{enumerate}
+
+\section{Results}\label{sec:results}
+\section{Conclusions}\label{sec:conclusions}
+\section{Acknowledgments}
+This work was funded in part by NSF Career Award CNS-0347886 and by NSF NeTS Award CNS-0435527. Special thanks to Matthew Allen, Khaled Harras, Allan Knight, and Rich Wolski for their invaluable help and advice.
+
+\bibliography{IEEE,references}
+
+\end{document}
