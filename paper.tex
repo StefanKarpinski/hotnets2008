@@ -1,12 +1,13 @@
 \documentclass[conference]{IEEEtran}
 
-\newcommand{\thetitle}{Characterizing Flow Behavior in WLANs {\huge{Change-Point Detection and Distribution Clustering}}}
+\newcommand{\thetitle}{Characterizing Flow Behavior in WLANs}
+%\newcommand{\thesubtitle}{Change-Point Detection, Distribution Clustering,\\and Principal Component Analysis}
 
 \usepackage[pdftex]{graphicx}
 \usepackage[labelfont=bf,small]{caption}
 \usepackage[font=small,labelfont=bf,position=top,nearskip=0em]{subfig}
 \usepackage{cite,amsmath,amssymb,rotating,multirow,bigstrut,url,wrapfig}
-\usepackage[hyperfigures,bookmarks,bookmarksopen,bookmarksnumbered,frenchlinks=true,pdftitle={Characterizing Flow Behavior in WLANs: Change-Point Detection and Distribution Clustering}]{hyperref}
+\usepackage[hyperfigures,bookmarks,bookmarksopen,bookmarksnumbered,frenchlinks=true,pdftitle={\thetitle}]{hyperref}
 
 \hyphenation{op-tical net-works semi-conduc-tor IEEEtran}
 \bibliographystyle{IEEEtran}
@@ -17,6 +18,8 @@
 \title{
 \vspace{-0.25em}
 \thetitle
+%\vspace{0.25em}
+%\LARGE{\thesubtitle}
 }
 \author{
 {\large{Stefan~Karpinski, Elizabeth~M.~Belding, Kevin~C.~Almeroth}} \vspace{0.25em}\\
@@ -107,7 +110,7 @@ To reduce the dimensionality of distribution data, we use a sequence of techniqu
 First, we divide each flow's series of values---sizes or inter-packet intervals---into segments of homogeneous behavior, using time-series change-point detection. We call these subsegments of flows ``\textit{flowlets}.'' Second, we apply agglomerative clustering to find closely related behaviors. Third, we use principal component analysis (\caps{PCA}) to isolate the most important aspects of behavior across the entire collection. Finally, we analyze the geometry and distribution of behaviors with respect to their principal components.
 
 Using clustering followed by \caps{PCA} is a common approach to analyzing data with high-dimensionality. % TODO: cite this
-The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, our data are variably sized samples of values from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
+The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, our data are variably sized samples from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
 
 %Non-flowlet procedure:
 %\begin{enumerate}
