@@ -26,6 +26,8 @@ University of California, Santa Barbara \vspace{0.35em}\\
 %\vspace{-0.5em}
 }
 
+\newcommand{\todo}[1]{[\textit{\textbf{TODO}: {#1}}]}
+
 \newcommand{\X}{\mathsf{X}}
 \newcommand{\M}{\mathsf{M}}
 \newcommand{\E}[1]{\left<#1\right>}
@@ -66,12 +68,15 @@ The methodology for generating synthetic \caps{WLAN} workload remains incomplete
 
 Using variable bit-rate (\caps{VBR}) flows is a common elaboration upon the \caps{CBR} flow model. In \caps{VBR} models, the packets sizes and the inter-packet intervals of each flow are separately randomly sampled from independent, identically distributed (i.i.d.) pre-specified distributions.
 % independently randomly sampled from fixed, pre-specified distributions. %Both the packet sizes and inter-packet intervals are thus modeled as separate, independent and identically distributed (i.i.d.) time series.
-One of the most significant results of~\cite{Karpinski07:realism} is that if high-level workload is realistic, then an i.i.d. \caps{VBR} model for flow behavior accurately reproduces network performance---\textit{so long as realistic packet size and inter-packet interval distributions are used for each flow}. This requirement, however, is non-trivial to satisfy. The size and interval distributions used in~\cite{Karpinski07:realism} were not simply parametric distributions typically used with \caps{VBR} models. Rather, they were empirical distributions of 
+One of the most significant results of~\cite{Karpinski07:realism} is that if high-level workload is realistic, then an i.i.d. \caps{VBR} model for flow behavior accurately reproduces network performance---\textit{so long as realistic packet size and inter-packet interval distributions are used for each flow}. This requirement, however, is non-trivial to satisfy. The size and interval distributions used in~\cite{Karpinski07:realism} were not simple parametric distributions typically used with \caps{VBR} models. Rather, they were empirical distributions taken directly from the observed behavior of each flow in the original trace. Thus, every flow has a unique signature of packet sizes and inter-packet intervals. To produce a realistic \textit{collection} of such signatures, requires an understanding of what realistic signatures ``look like,'' and how frequently they occur relative to each other.
 
-Each flow has a unique signature of packet sizes and inter-packet intervals. To produce a realistic \textit{collection} of such signatures, requires an understanding of what realistic signatures ``look like,'' and how frequently they occur relative to each other. One can conceptualize this as a ``distribution of distributions.'' Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
+In this paper we use a series of advanced non-parametric statistical techniques
+%---including a novel distribution clustering method---
+to analyze, understand, and ultimately fully characterize the space of packets size and inter-packet interval distributions found in real-world examples of \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.} perfectly: their session and flow models provide the high-level traffic behavior, while our packet models provide the low-level details of behavior. Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
 
-Unfortunately, packet-size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces. % TODO: verify this
-Practically, limits on feasible values and quantization make these dimensions finite, but they remain too large for direct characterization of the regions in which realistic flow behaviors are found. In this work we use several non-parametric statistical analysis techniques---including a novel distribution clustering method---to analyze, understand, and ultimately characterize the space of packets size and inter-packet interval distributions found in examples of real \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.} perfectly: their session and flow models provide the high-level behavior, while our packet models provide the low-level behavior. Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
+\todo{summary of detailed findings}
+
+\todo{paper outline paragraph}
 
 %The work of Hern\'andez-Campos~\textit{et~al.} has provided a statistically validated high-level framework for \caps{WLAN} traffic patterns. Karpinski~\textit{et~al.} demonstrated that given such a high-level framework, together with realistic per-flow packet size and inter-packet interval distributions, one can produce a complete and sufficiently realistic model for generating \caps{WLAN} traffic. In this research we address the outstanding problem: understanding and modeling the packet size and inter-packet interval distributions of flows in a \caps{WLAN}. 
 
@@ -80,8 +85,6 @@ Practically, limits on feasible values and quantization make these dimensions fi
 %One of the open questions is whether these distributions can all be sampled independently. It may be that there is correlation between the per-user flow count value and the sizes or inter-arrival times of the individual flows.
 
 %Another open problem is how to generate individual packets for each flow. Our previous work~\cite{Karpinski07:cbr-failure} showed that the constant bit-rate \caps{CBR} packet behavior model, even when employed with higher level behavior taken directly traces, still fails to accurately reproduce all of the performance metrics considered, except for average end-to-end network latency. Even in the ``good'' case of average end-to-end latency, factor of error induced by the \caps{CBR} model exceeded a factor of two half or the time! Moreover, this model assumed that it was known, not only how many packets each flow consisted of, but also the total duration of each flow, and thus its average data rate. While we did not examine the mixed-model case where only one of these parameters was known, this additional ignorance can only worsen the accuracy the model.
-
-
 
 %Our work complements this by providing an objective, rigorous methodology for measuring how accurately synthetic models reproduce the performance characteristics of real-world traffic~\cite{Karpinski07:realism,Karpinski07:cbr-failure}. This paper aims to bridge the gap by 
 
@@ -95,7 +98,16 @@ Practically, limits on feasible values and quantization make these dimensions fi
 
 \section{Methodology}\label{sec:methodology}
 
+Our goal in this research is to provide an effective general methodology for analyzing and characterizing the subspace of packet size and inter-packet interval distributions found across the flows in \caps{WLAN} trace traffic. In essence, we require a ``distribution of distributions.'' %Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
+Unfortunately, size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces.%TODO: verify this
+\footnote{The space of size distributions has a countably infinite number of dimensions, while the space of inter-packet interval distributions has an uncountably infinite number of dimensions.}
+In practice, limits on possible values and quantization make the effective dimensions finite, but still too large for direct analysis.% of the regions in which realistic flow behaviors can be found.
 
+To reduce the dimensionality of distribution data, we use a sequence of techniques.
+First, we divide each flow's series of values---sizes or inter-packet intervals---into segments of homogeneous behavior, using time-series change-point detection. We call these subsegments of flows ``\textit{flowlets}.'' Second, we apply agglomerative clustering to find closely related behaviors. Third, we use principal component analysis (\caps{PCA}) to isolate the most important aspects of behavior across the entire collection. Finally, we analyze the geometry and distribution of behaviors with respect to their principal components.
+
+Using clustering followed by \caps{PCA} is a common approach to analyzing data with high-dimensionality. % TODO: cite this
+The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, our data are variably sized samples of values from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
 
 %Non-flowlet procedure:
 %\begin{enumerate}
