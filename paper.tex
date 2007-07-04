@@ -77,7 +77,7 @@ In this paper we use a series of advanced non-parametric statistical techniques
 %---including a novel distribution clustering method---
 to analyze, understand, and ultimately fully characterize the space of packets size and inter-packet interval distributions found in real-world examples of \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.} perfectly: their session and flow models provide the high-level traffic behavior, while our packet models provide the low-level details of behavior. Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
 
-\todo{summary of detailed findings}
+\todo{summary of specific findings}
 
 \todo{paper outline paragraph}
 
@@ -104,7 +104,7 @@ to analyze, understand, and ultimately fully characterize the space of packets s
 Our goal in this research is to provide an effective general methodology for analyzing and characterizing the subspace of packet size and inter-packet interval distributions found across the flows in \caps{WLAN} trace traffic. In essence, we require a ``distribution of distributions.'' %Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
 Unfortunately, size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces.%TODO: verify this
 \footnote{The space of size distributions has a countably infinite number of dimensions, while the space of inter-packet interval distributions has an uncountably infinite number of dimensions.}
-In practice, limits on possible values and quantization make the effective dimensions finite, but still too large for direct analysis.% of the regions in which realistic flow behaviors can be found.
+In practice, limits on possible values and quantization make the effective dimensions finite, but nonetheless too large for direct analysis.% of the regions in which realistic flow behaviors can be found.
 
 To reduce the dimensionality of distribution data, we use a sequence of techniques.
 First, we divide each flow's series of values---sizes or inter-packet intervals---into segments of homogeneous behavior, using time-series change-point detection. We call these subsegments of flows ``\textit{flowlets}.'' Second, we apply agglomerative clustering to find closely related behaviors. Third, we use principal component analysis (\caps{PCA}) to isolate the most important aspects of behavior across the entire collection. Finally, we analyze the geometry and distribution of behaviors with respect to their principal components.
@@ -112,24 +112,30 @@ First, we divide each flow's series of values---sizes or inter-packet intervals-
 Using clustering followed by \caps{PCA} is a common approach to analyzing data with high-dimensionality. % TODO: cite this
 The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, our data are variably sized samples from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
 
-%Non-flowlet procedure:
-%\begin{enumerate}
-%\item trace data
-%\item per-flow distributions
-%\item multi-flow distribution clusters
-%\item multi-flow distribution cluster approximations (PCA)
-%\end{enumerate}
-%Flowlet procedure:
-%\begin{enumerate}
-%\item trace data
-%\item flowlets (via change-point detection)
-%\item per-flowlet distributions
-%\item multi-flowlet distribution clusters
-%\item multi-flowlet distribution cluster approximations (PCA)
-%\end{enumerate}
+\subsection{Flowlet Splitting}
+
+In which Pooh describes how to split flows into homogeneously behaved segments of values, heretofore known as piglets... I mean flowlets.
+
+\subsection{Flowlet Clustering}
+
+In which Pooh explains how to use the non-parametric Baumgartner-Wei\ss-Schindler test to iteratively merge clusters of flowlet behaviors into collections of closely related behaviors.
+
+\subsection{Principal Component Analysis}
+
+In which Pooh applies the vector space dimensionality reduction technique, known as principal component analysis to find a new basis for the vector spaces of packet size and inter-packet interval behaviors.
 
 \section{Results}\label{sec:results}
+
+In which Pooh presents graphs and explanations of all of the results he has found.
+
+\subsection{Geometric Analysis}
+
+In which Pooh demonstrates that all of the behaviors can be expressed as unitary weighted sums of fundamental behaviors falling along a one-dimensional manifold in principal component space. This explanation and result completely blows Eyore's mind.
+
 \section{Conclusions}\label{sec:conclusions}
+
+In which Pooh wraps up his presentation of results.
+
 \section{Acknowledgments}
 This work was funded in part by NSF Career Award CNS-0347886 and by NSF NeTS Award CNS-0435527. Special thanks to Matthew Allen, Khaled Harras, Allan Knight, and Rich Wolski for their invaluable help and advice.
 
