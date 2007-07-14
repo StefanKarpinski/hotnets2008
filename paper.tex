@@ -60,6 +60,7 @@ University of California, Santa Barbara \vspace{0.35em}\\
 \maketitle
 
 %\begin{abstract}
+% We present a technique for representing packet-level flow behavior in a small number of dimensions, while preserving the essential similarities and dissimilarities between flows.
 %\end{abstract}
 
 \section{Introduction}\label{sec:intro}
@@ -75,7 +76,7 @@ One of the most significant results of~\cite{Karpinski07:realism} is that if hig
 
 In this paper we use a series of advanced non-parametric statistical techniques
 %---including a novel distribution clustering method---
-to analyze, understand, and ultimately fully characterize the space of packets size and inter-packet interval distributions found in real-world examples of \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.} perfectly: their session and flow models provide the high-level traffic behavior, while our packet models provide the low-level details of behavior. Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
+to analyze, understand, characterize, and visualize the space of packets size and inter-packet interval distributions found in real-world examples of \caps{WLAN} traffic. This work complements that of Hern\'andez-Campos~\textit{et~al.}: their session and flow models provide the high-level traffic behavior, while our research explores the low-level details of behavior.% Taken together, these models provide, for the first time, a full-stack composite model capable of generating statistically realistic \caps{WLAN} workload.
 
 \todo{summary of specific findings}
 
@@ -104,37 +105,40 @@ to analyze, understand, and ultimately fully characterize the space of packets s
 Our goal in this research is to provide an effective general methodology for analyzing and characterizing the subspace of packet size and inter-packet interval distributions found across the flows in \caps{WLAN} trace traffic. In essence, we require a ``distribution of distributions.'' %Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
 Unfortunately, size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces.%TODO: verify this
 \footnote{The space of size distributions has a countably infinite number of dimensions, while the space of inter-packet interval distributions has an uncountably infinite number of dimensions.}
-In practice, limits on possible values and quantization make the effective dimensions finite, but nonetheless too large for direct analysis.% of the regions in which realistic flow behaviors can be found.
+In practice, limits on possible values and quantization make the effective dimensions finite, but nonetheless too large for simple, direct analysis.% of the regions in which realistic flow behaviors can be found.
 
 To reduce the dimensionality of distribution data, we use a sequence of techniques.
-First, we divide each flow's series of values---sizes or inter-packet intervals---into segments of homogeneous behavior, using time-series change-point detection. We call these subsegments of flows ``\textit{flowlets}.'' Second, we apply agglomerative clustering to find closely related behaviors. Third, we use principal component analysis (\caps{PCA}) to isolate the most important aspects of behavior across the entire collection. Finally, we analyze the geometry and distribution of behaviors with respect to their principal components.
+First, we divide each flow's series of values---sizes or inter-packet intervals---into segments of homogeneous behavior, using time-series change-point detection. We call these subsegments of flows ``\textit{flowlets}.'' Second, we apply agglomerative clustering to find closely related behaviors. Third, we use principal component analysis (\caps{PCA}) to isolate the most important aspects of behavior across the entire collection. The resulting transformation allows us to meaningfully visualize the space of flow behaviors with respect to packet size or inter-packet intervals in one, two or three dimensions. With each additional dimension, more information about the behavior is captured. %Finally, we analyze the geometry and distribution of behaviors with respect to their principal components.
 
 Using clustering followed by \caps{PCA} is a common approach to analyzing data with high-dimensionality. % TODO: cite this
-The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, our data are variably sized samples from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
+The nature of our data, however, requires novel techniques---these are not standard multidimensional data-points for which normal clustering techniques or standard \caps{PCA} can be utilized. Rather, the data are variably sized samples from unknown, non-parametric distributions. Our clustering and \caps{PCA} methods are specially designed, based on prior art in non-parametric statistics, to address the difficulties encountered in this problem.
+
+\subsection{The Baumgartner-Wei\ss-Schindler Test}
+
+%It was demonstrated experimentally in~\cite{Karpinski07:realism} that it suffices to know the high-level behavior and the marginal distributions of packets sizes and of inter-packet intervals for each flow, to reproduce realistic performance characteristics in simulation. This implies that these two distributions together adequately characterize the packet-level behavior of the flow. %These distributions come from the actual collection of packets sent and received at wireless nodes in a \caps{WLAN}.
+
+%The first step in analyzing packet-level flow behavior is determining essential similarities and differences within and across flows. When does the behavior of a single flow change from one ``mode'' to another? When can the behaviors of two different flows be considered to be the same? 
+%To answer these questions, we turn to the statistical technique of goodness-of-fit testing. A goodness-if-fit test determines how likely it is that a sample came from a given distribution, or more generally, how likely it is that two samples came from the same distribution.
+
+In the case of packet sizes and inter-packet intervals, there are no ``clean'' parametric models that capture the variety of behaviors seen in network traces. Therefore, we rely on non-parametric statistical procedures for our analysis. There are a number of non-parametric two-sample goodness-of-fit tests in the statistical literature. Such tests take two samples of scalar values and test the null hypothesis that the samples were drawn from the same (unknown) underlying distribution. Non-parametric tests do not make any assumptions about the shape or nature of the underlying distributions, other than that they are continuous and real-valued.
+
+We use the Baumgartner-Wei\ss-Schindler (\caps{BWS}) test~\cite{BWS98} rather than the more well-known Kolmogorov-Smirnov (\caps{KS}) or Cram\'er-von Mises (\caps{CvM}) tests for three reasons.\footnote{There is a generalized version of the CvM test~\cite{Pettitt79} that may compare more favorably with the BWS test, but no simulated results were presented by which to evaluate its power. This generalized CvM and BWS are closely related: both use the same variance-weighted CvM integral as their basis, but they use different estimators of this quantity as test statistics.} First, the \caps{BWS} test is experimentally more powerful for detecting differences in both location and shape, performing very nearly as well as parametric tests, in cases where such specialized tests exist. Second, in certain cases both the \caps{KS} and \caps{CvM} tests suffer from limited power as sample size grows: even when the sample size is allowed to go to infinity, for some types of differences, the test power levels off well before reaching unity. This causes many failures to reject the null hypothesis even when samples are large and significant underlying differences exist. The \caps{BWS} test does not exhibit this effect. Finally, the exact distribution of the \caps{BWS} statistic approaches its asymptotic distribution very quickly: the asymptotic distribution is already a good approximation for samples as small as ten values. This is highly desirable since the cost of computing exact distributions grows exponentially with sample size, so the asymptotic distribution must be used even for modestly sized samples.
+
+%These sets of values for packet size and inter-packet intervals can be considered as a sample from the underlying behavioral distributions for each flow. When asking the question of whether two flows have the same fundamental behavior, we are presented with a statistical dilemma: \textit{how likely is it that these two samples were randomly drawn from the same underlying distribution}.
 
 \subsection{Flowlet Splitting}
 
-In which Pooh describes how to split flows into homogeneously behaved segments of values, heretofore known as piglets... I mean flowlets.
+The first analytical task is to split the packet size and inter-packet interval time series for each flow into segments with homogeneous statistical behavior. A great deal of classical statistical research has been done in the general area of time-series change-point detection~\cite{Basseville93}. These classical approaches, however, cannot be applied when the number of change points are unknown and, worse still, the underlying models for the stochastic processes are unknown. Work has been done in econometrics that allows a single change point to be discovered using non-parametric \caps{KS}- or \caps{CvM}-type significance tests~\cite{Inoue01}. Zheng~\textit{et~al.}~\cite{Zhang01} use recursive iteration of this procedure with the Fligner-Policello (\caps{FP}) test to detect change points in Internet path properties.
+Our technique is the same except that we use the \caps{BWS} test rather than \caps{FP}.\footnote{Strictly, our ``backward elimination'' post-processing procedure differs: we eliminate the insignificant change point with the largest $p$-value first and iterate; Zhang~\textit{et~al.} eliminate change points in the order they are encountered.}
+The \caps{FP} test detects only changes in central location (non-parametrically), whereas \caps{BWS} detects changes in both location and shape.
 
 \subsection{Flowlet Clustering}
 
-In which Pooh explains how to use the non-parametric Baumgartner-Wei\ss-Schindler test to iteratively merge clusters of flowlet behaviors into collections of closely related behaviors.
-
 \subsection{Principal Component Analysis}
-
-In which Pooh applies the vector space dimensionality reduction technique, known as principal component analysis to find a new basis for the vector spaces of packet size and inter-packet interval behaviors.
 
 \section{Results}\label{sec:results}
 
-In which Pooh presents graphs and explanations of all of the results he has found.
-
-\subsection{Geometric Analysis}
-
-In which Pooh demonstrates that all of the behaviors can be expressed as unitary weighted sums of fundamental behaviors falling along a one-dimensional manifold in principal component space. This explanation and result completely blows Eyore's mind.
-
 \section{Conclusions}\label{sec:conclusions}
-
-In which Pooh wraps up his presentation of results.
 
 \section{Acknowledgments}
 This work was funded in part by NSF Career Award CNS-0347886 and by NSF NeTS Award CNS-0435527. Special thanks to Matthew Allen, Khaled Harras, Allan Knight, and Rich Wolski for their invaluable help and advice.
