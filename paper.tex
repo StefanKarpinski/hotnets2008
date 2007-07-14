@@ -102,8 +102,8 @@ to analyze, understand, characterize, and visualize the space of packets size an
 
 \section{Methodology}\label{sec:methodology}
 
-Our goal in this research is to provide an effective general methodology for analyzing and characterizing the subspace of packet size and inter-packet interval distributions found across the flows in \caps{WLAN} trace traffic. In essence, we require a ``distribution of distributions.'' %Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
-Unfortunately, size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces.%TODO: verify this
+Our goal in this research is to provide an effective general methodology for analyzing, understanding, and characterizing the subspace of packet size and inter-packet interval distributions found across the flows in \caps{WLAN} trace traffic. In essence, we require a ``distribution of distributions.'' %Essentially, one needs to find the subspace of all possible signatures in which realistic signatures occur, and how often.
+However, size and interval distributions exist in spaces with very high dimensionality. In theory, both types of distributions live in infinite-dimensional Hilbert spaces.%TODO: verify this
 \footnote{The space of size distributions has a countably infinite number of dimensions, while the space of inter-packet interval distributions has an uncountably infinite number of dimensions.}
 In practice, limits on possible values and quantization make the effective dimensions finite, but nonetheless too large for simple, direct analysis.% of the regions in which realistic flow behaviors can be found.
 
@@ -126,7 +126,7 @@ We use the Baumgartner-Wei\ss-Schindler (\caps{BWS}) test~\cite{BWS98} rather th
 
 %These sets of values for packet size and inter-packet intervals can be considered as a sample from the underlying behavioral distributions for each flow. When asking the question of whether two flows have the same fundamental behavior, we are presented with a statistical dilemma: \textit{how likely is it that these two samples were randomly drawn from the same underlying distribution}.
 
-\subsection{Flowlet Splitting}
+\subsection{Flow Splitting}
 
 The first analytical task is to split the packet size and inter-packet interval time series for each flow into segments with homogeneous statistical behavior. A great deal of classical statistical research has been done in the general area of time-series change-point detection~\cite{Basseville93}. These classical approaches, however, cannot be applied when the number of change points are unknown and, worse still, the underlying models for the stochastic processes are unknown. Work has been done in econometrics that allows a single change point to be discovered using non-parametric \caps{KS}- or \caps{CvM}-type significance tests~\cite{Inoue01}. Zheng~\textit{et~al.}~\cite{Zhang01} use recursive iteration of this procedure with the Fligner-Policello (\caps{FP}) test to detect change points in Internet path properties.
 Our technique is the same except that we use the \caps{BWS} test rather than \caps{FP}.\footnote{Strictly, our ``backward elimination'' post-processing procedure differs: we eliminate the insignificant change point with the largest $p$-value first and iterate; Zhang~\textit{et~al.} eliminate change points in the order they are encountered.}
